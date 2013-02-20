@@ -46,10 +46,10 @@ object Application extends Controller {
 
     val app = implicitly[Application]
     val allowedAccessTokens = app.configuration
-      .getStringList(key)
+      .getString(key)
       .getOrElse(throw new PlayException("Configuration error", "Could not find " + key + " in configuration"))
 
-    if (allowedAccessTokens contains accessToken) {
+    if (allowedAccessTokens.split(",") contains accessToken) {
 
       val url =
         s"https://api.github.com/repos/$owner/$repository/contents/$path?access_token=$accessToken"

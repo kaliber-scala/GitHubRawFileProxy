@@ -15,7 +15,7 @@ Configuration
 -------------
 
 ``` scala
-	allowed.accessTokens=[3ab423aa747918asdd2a256b852c5a60580d3,3ab423aa7479186c96eb32asd5a60asd0d3]
+	allowed.accessTokens="3ab423aa747918asdd2a256b852c5a60580d3,3ab423aa7479186c96eb32asd5a60asd0d3"
 ```
 
 Usage
