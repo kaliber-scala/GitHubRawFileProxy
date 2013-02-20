@@ -14,3 +14,6 @@ dist
 /RUNNING_PID
 /.settings
 /conf/overrides.conf
+.cache
+/bin
+.target

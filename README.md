@@ -3,6 +3,14 @@ GitHub raw file proxy
 
 This simple application can be used to proxy private raw files from GitHub.
 
+Preparation
+-----------
+
+Use the documentation of the API to create an access token that has access with the 
+scope `repo` to the target repository.
+
+http://developer.github.com/v3/oauth/#get-a-single-authorization
+
 Configuration
 -------------
 
