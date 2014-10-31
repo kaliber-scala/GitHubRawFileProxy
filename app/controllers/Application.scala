@@ -8,6 +8,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.iteratee.Enumerator
 import org.apache.commons.codec.binary.Base64
 import play.api.Play.current
+import scala.concurrent.Future
 
 object Application extends Controller {
 
@@ -36,11 +37,11 @@ object Application extends Controller {
    */
   def getFileContents(json: JsValue): Array[Byte] = {
     val content = (json \ "content").as[String]
-    
+
     Base64 decodeBase64 content.getBytes
   }
 
-  def proxy(accessToken: String, owner: String, repository: String, path: String) = Action {
+  def proxy(accessToken: String, owner: String, repository: String, path: String) = Action.async {
 
     val key = "allowed.accessTokens"
 
@@ -54,26 +55,24 @@ object Application extends Controller {
       val url =
         s"https://api.github.com/repos/$owner/$repository/contents/$path?access_token=$accessToken"
 
-      Async {
-        WS
-          .url(url)
-          .get
-          .map { response =>
-            val result = response.status match {
-              case 200 => Right(response.json)
-              case status => Left(s"Problem accessing github api, status '$status', $response.body")
-            }
-
-            result.fold(
-              problem => BadRequest(problem),
-              json =>
-                SimpleResult(
-                  header = ResponseHeader(200, Map(CONTENT_TYPE -> "application/octet-stream")),
-                  body = Enumerator(getFileContents(json))))
+      WS
+        .url(url)
+        .get
+        .map { response =>
+          val result = response.status match {
+            case 200 => Right(response.json)
+            case status => Left(s"Problem accessing github api, status '$status', $response.body")
           }
-      }
 
-    } else BadRequest(s"Access denied for access token '$accessToken'")
+          result.fold(
+            problem => BadRequest(problem),
+            json =>
+              Result(
+                header = ResponseHeader(200, Map(CONTENT_TYPE -> "application/octet-stream")),
+                body = Enumerator(getFileContents(json))))
+        }
+
+    } else Future.successful(BadRequest(s"Access denied for access token '$accessToken'"))
   }
 
 }
