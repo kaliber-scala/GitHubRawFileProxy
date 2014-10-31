@@ -23,3 +23,6 @@ Usage
 
 http://localhost:9000/accessToken/Owner/Repository/path/to/file.ext
 
+Deployment
+----------
+HEROKU_API_KEY="xxxx-xxxx-xxxx-xxxx" sbt stage deployHeroku
