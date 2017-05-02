@@ -30,6 +30,53 @@ http://localhost:9000/?branch={branchName}&accessToken={accessToken}&owner={Owne
 
 The `branch` query param can be omitted which will cause it to fallback to the master branch
 
-Deployment
+HEROKU Deployment
 ----------
 HEROKU_API_KEY="xxxx-xxxx-xxxx-xxxx" sbt stage deployHeroku
+
+Docker Deployment
+----------
+See https://github.com/marcuslonnberg/sbt-docker for available methods.
+
+Need to override the Images / tag name?  
+Create a file named overrideDockerImageName.sbt in the root with the give content:
+The registry is optional. When not specified it will use the docker.io registry.
+
+```
+lazy val overrideDockerImageNames = settingKey[Option[Seq[ImageName]]]("get the docker image name")
+overrideDockerImageNames := Some(Seq(
+  ImageName(
+    registry = Some("some registry address"),
+    repository = "{imageName}:{tag}")
+))
+```
+
+Typically you want to use something like this:
+```
+lazy val overrideDockerImageNames = settingKey[Option[Seq[ImageName]]]("get the docker image name")
+overrideDockerImageNames := Some(Seq(
+  ImageName(s"${organization.value}/${name.value}-${version.value}:latest"),
+  ImageName(s"${organization.value}/${name.value}:${version.value}")
+))
+```
+
+Build the image usage: `sbt dockerBuildAndPush`
+Start a docker container:
+
+docker-compose.yml
+```
+gitrawfileproxy:
+  image: {registry}/{imagename}:{tag}
+  stdin_open: true
+  restart: always
+  environment:
+    - JAVA_OPTS=-Dconfig.file=/configs/environment.conf
+  volumes:
+    - ./:/configs
+    - /tmp/resource-api:/logs
+  ports:
+    - "{exposed port}:9000"
+```
+Make sure that the /config directory is available as a volume and that it contains the environment.conf
+
+To start the container: `docker compose up -d`
