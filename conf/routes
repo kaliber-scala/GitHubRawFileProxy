@@ -3,8 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /                           			controllers.Application.index
-GET		/:accessToken/:owner/:repository/*path	controllers.Application.proxy(accessToken:String, owner:String, repository:String, path:String)
+GET		/:accessToken/:owner/:repository/*path	                controllers.Application.proxy(accessToken:String, owner:String, repository:String, path:String)
+GET		/	                                                    controllers.Application.proxyWithBranchOption(accessToken:String, owner:String, repository:String, branch: Option[String], path:String)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

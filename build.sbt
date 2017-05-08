@@ -1,10 +1,10 @@
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-name := "GitHubRawFileProxy"
+name := "GitRawFileProxy"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.3"
+scalaVersion := "2.11.8"
 
 libraryDependencies += ws
 
